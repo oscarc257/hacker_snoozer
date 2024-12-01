@@ -61,7 +61,14 @@ class StoryList {
 
 		// build an instance of our own class using the new array of stories
 		return new StoryList(stories);
-	}
+
+  } catch (error) {
+    console.error("Error fetching stories:", error);
+    // Show a user-friendly error message
+    alert("Unable to fetch stories. Please try again later.");
+    return new StoryList([]); // Return an empty list if the API fails
+  }
+	
 
 	/** Adds story data to API, makes a Story instance, adds it to story list.
 	 * - user - the current instance of User who will post the story
@@ -83,7 +90,11 @@ class StoryList {
 		user.ownStories.unshift(story);
 
 		return story;
-	}
+	} catch (error) {
+    console.error("Error adding story:", error);
+    alert("Unable to add story. Please try again later.");
+    return null; // Return null to indicate failure
+  }
 
 	/** Delete story from API and remove from the story lists.
 	 *
@@ -105,7 +116,10 @@ class StoryList {
 		// do the same thing for the user's list of stories & their favorites
 		user.ownStories = user.ownStories.filter((s) => s.storyId !== storyId);
 		user.favorites = user.favorites.filter((s) => s.storyId !== storyId);
-	}
+	} catch (error) {
+    console.error("Error removing story:", error);
+    alert("Unable to delete the story. Please try again later.");
+  }
 }
 
 /******************************************************************************
@@ -160,7 +174,11 @@ class User {
 			},
 			response.data.token
 		);
-	}
+	} catch (error) {
+    console.error("Signup failed:", error);
+    alert("Signup failed. Please check your details and try again.");
+    return null;
+  }
 
 	/** Login in user with API, make User instance & return it.
 
@@ -187,7 +205,11 @@ class User {
 			},
 			response.data.token
 		);
-	}
+	} catch (error) {
+    console.error("Login failed:", error);
+    alert("Login failed. Please check your username and password and try again.");
+    return null;
+  }
 
 	/** When we already have credentials (token & username) for a user,
 	 *   we can log them in automatically. This function does that.
@@ -217,16 +239,23 @@ class User {
 			console.error("loginViaStoredCredentials failed", err);
 			return null;
 		}
-	}
+	} catch (error) {
+    console.error("Login via stored credentials failed:", error);
+    alert("Automatic login failed. Please log in manually.");
+    return null;
+  }
 
 	/** Add a story to the list of user favorites and update the API
 	 * - story: a Story instance to add to favorites
 	 */
 
 	async addFavorite(story) {
-		this.favorites.push(story);
+		this.favorites.unshift(story);
 		await this._addOrRemoveFavorite("add", story);
-	}
+	} catch (error) {
+    console.error("Error adding to favorites:", error);
+    alert("Unable to add to favorites. Please try again.");
+  }
 
 	/** Remove a story to the list of user favorites and update the API
 	 * - story: the Story instance to remove from favorites
@@ -235,7 +264,10 @@ class User {
 	async removeFavorite(story) {
 		this.favorites = this.favorites.filter((s) => s.storyId !== story.storyId);
 		await this._addOrRemoveFavorite("remove", story);
-	}
+	} catch (error) {
+    console.error("Error removing from favorites:", error);
+    alert("Unable to remove from favorites. Please try again.");
+  }
 
 	/** Update API with favorite/not-favorite.
 	 *   - newState: "add" or "remove"

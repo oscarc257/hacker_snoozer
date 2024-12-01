@@ -118,6 +118,7 @@ async function updateUIOnUserLogin() {
 
   updateNavOnLogin();
   generateUserProfile();
+  $storiesContainer.show()
 }
 
 /** Show a "user profile" part of page built from the current user's info. */
@@ -130,3 +131,25 @@ function generateUserProfile() {
   $("#profile-account-date").text(currentUser.createdAt.slice(0, 10));
 }
 
+/* UI Feedback Helpers
+*/
+
+// Show a feedback message to the user
+function showFeedbackMessage(message, type) {
+ const $feedback = $("#feedback");
+ $feedback.text(message).removeClass("success error").addClass(type);
+ $feedback.show();
+
+ // Hide feedback after a few seconds
+ setTimeout(() => $feedback.fadeOut(), 3000);
+}
+
+// Show a loading spinner
+function showLoadingSpinner() {
+ $("#loading-spinner").show();
+}
+
+// Hide a loading spinner
+function hideLoadingSpinner() {
+ $("#loading-spinner").hide();
+}
